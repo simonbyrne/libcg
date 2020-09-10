@@ -2,7 +2,7 @@ JULIA_DIR := $(shell julia -e 'print(dirname(Sys.BINDIR))')
 DLEXT = dylib
 
 main: main.c sys.$(DLEXT)
-	gcc -DJULIAC_PROGRAM_LIBNAME=\"sys.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
+	gcc -DJULIAC_PROGRAM_LIBNAME=\"sys.$(DLEXT)\" -o $@ $^ -O2 -fPIC\
 	 -I"$(JULIA_DIR)/include/julia"\
 	 -L"$(JULIA_DIR)/lib"\
 	 -ljulia\
