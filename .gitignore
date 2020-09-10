@@ -1,0 +1,6 @@
+main
+sys.dylib
+sys.so
+sys.dll
+sys.o
+precompile.jl
