@@ -29,6 +29,6 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - name: make
-        run: make
+        run: make JULIA_DIR=/Users/runner/julia
       - name: run
         run: ./main
