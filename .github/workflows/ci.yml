@@ -32,6 +32,6 @@ jobs:
       - name: find dylib
         run: find /Users/runner/julia -iname sys.dylib
       - name: make
-        run: make
+        run: make JULIA_DIR=/Users/runner/julia
       - name: run
         run: ./main
