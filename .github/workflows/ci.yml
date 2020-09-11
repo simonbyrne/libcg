@@ -31,6 +31,6 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: julia-actions/julia-buildpkg@latest          
       - name: make
-        run: make JULIA_DIR=/Users/runner/julia
+        run: make JULIA_DIR=$HOME/julia
       - name: run
         run: ./main
