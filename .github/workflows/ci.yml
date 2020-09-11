@@ -28,7 +28,9 @@ jobs:
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
+      - name: find dylib
+        run: find /Users/runner/julia -iname sys.dylib
       - name: make
-        run: make JULIA_DIR=/Users/runner/julia
+        run: make
       - name: run
         run: ./main
