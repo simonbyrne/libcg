@@ -32,5 +32,9 @@ jobs:
       - uses: julia-actions/julia-buildpkg@latest          
       - name: make
         run: make JULIA_DIR=$HOME/julia
+        if: matrix.os != 'windows-latest'
+      - name: make (win)
+        run: make JULIA_DIR=$HOME/julia CC=gcc
+        if: matrix.os == 'windows-latest'
       - name: run
         run: ./main
