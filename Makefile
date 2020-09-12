@@ -17,13 +17,13 @@ cg.$(DLEXT): cg.jl build.jl
 
 $(MAIN): main.c cg.$(DLEXT)
 ifeq ($(OS), Darwin)
-	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIC\
+	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
 	 -I"$(JULIA_DIR)/include/julia"\
 	 -L"$(JULIA_DIR)/lib"\
 	 -ljulia\
 	 -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path"
 else
-	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIC\
+	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
 	 -I"$(JULIA_DIR)/include/julia"\
 	 -L"$(JULIA_DIR)/lib"\
 	 -ljulia\
