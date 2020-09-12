@@ -11,6 +11,7 @@ endif
 
 .DEFAULT_GOAL := main
 
+
 cg.$(DLEXT): cg.jl build.jl
 	julia --startup-file=no --project build.jl
 
@@ -26,7 +27,7 @@ else
 	 -I"$(JULIA_DIR)/include/julia"\
 	 -L"$(JULIA_DIR)/lib"\
 	 -ljulia\
-	 -Wl,-rpath,"$(JULIA_DIR)/lib:$ORIGIN"
+	 -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN"
 endif
 
 .PHONY: clean
