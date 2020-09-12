@@ -1,18 +1,35 @@
+
+OS := $(shell uname)
+DLEXT := $(shell julia -e 'using Libdl; print(Libdl.dlext)')
+
 JULIA_DIR := $(shell julia -e 'print(dirname(Sys.BINDIR))')
-DLEXT = dylib
+MAIN := main
 
-precompile.jl: cg.jl
-	julia --startup-file=no --trace-compile=$@ $<
+ifeq ($(OS), WINNT)
+  MAIN := $(MAIN).exe
+endif
 
-sys.o: custom_sysimg.jl precompile.jl cg.jl
-	julia --startup-file=no -J"$(JULIA_DIR)/lib/julia/sys.$(DLEXT)" --output-o $@ $<
+.DEFAULT_GOAL := main
 
-sys.$(DLEXT): sys.o
-	gcc -shared -o $@ -fPIC -Wl,-all_load $< -Wl -L"$(JULIA_DIR)/lib" -ljulia # this is MacOS specific
 
-main: main.c sys.$(DLEXT)
-	gcc -DJULIAC_PROGRAM_LIBNAME=\"sys.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
+cg.$(DLEXT): cg.jl build.jl
+	julia --startup-file=no --project build.jl
+
+$(MAIN): main.c cg.$(DLEXT)
+ifeq ($(OS), Darwin)
+	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
 	 -I"$(JULIA_DIR)/include/julia"\
 	 -L"$(JULIA_DIR)/lib"\
 	 -ljulia\
-	 -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path" # MacOS ld doesn't let you use multiple rpaths in one statement
+	 -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path"
+else
+	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
+	 -I"$(JULIA_DIR)/include/julia"\
+	 -L"$(JULIA_DIR)/lib"\
+	 -ljulia\
+	 -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN"
+endif
+
+.PHONY: clean
+clean:
+	rm *.o *.dylib precompile.jl main

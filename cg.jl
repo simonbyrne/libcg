@@ -1,4 +1,4 @@
-module CG
+#module CG
 
 Base.@ccallable function julia_main()::Cint
     try
@@ -10,4 +10,4 @@ Base.@ccallable function julia_main()::Cint
     return 0
 end
 
-end # module
+#end # module
