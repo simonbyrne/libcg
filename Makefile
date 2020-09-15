@@ -9,6 +9,13 @@ ifeq ($(OS), WINNT)
   MAIN := $(MAIN).exe
 endif
 
+ifeq ($(OS), Darwin)
+  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path"
+else
+  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN"
+endif
+
+
 .DEFAULT_GOAL := main
 
 
@@ -16,20 +23,13 @@ cg.$(DLEXT): cg.jl build.jl
 	julia --startup-file=no --project build.jl
 
 $(MAIN): main.c cg.$(DLEXT)
-ifeq ($(OS), Darwin)
-	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
+	$(CC) -o $@ $^ -O2 -fPIE\
+         -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\"\
 	 -I"$(JULIA_DIR)/include/julia"\
 	 -L"$(JULIA_DIR)/lib"\
 	 -ljulia\
-	 -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path"
-else
-	$(CC) -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\" -o $@ $^ -O2 -fPIE\
-	 -I"$(JULIA_DIR)/include/julia"\
-	 -L"$(JULIA_DIR)/lib"\
-	 -ljulia\
-	 -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN"
-endif
+         $(WLARGS)
 
 .PHONY: clean
 clean:
-	rm *.o *.dylib precompile.jl main
+	$(RM) *.dylib *.so *.dll main
