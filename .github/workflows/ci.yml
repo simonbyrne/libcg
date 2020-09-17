@@ -40,3 +40,4 @@ jobs:
         run: ./main --trace-compile=stderr
       - name: library size
         run: ls -lh libcg.*
+        shell: bash
