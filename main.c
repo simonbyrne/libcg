@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 // Julia headers (for initialization and gc commands)
 #include "uv.h"
