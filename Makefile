@@ -27,7 +27,7 @@ $(MAIN): main.c cg.$(DLEXT)
          -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\"\
 	 -I"$(JULIA_DIR)/include/julia"\
 	 -L"$(JULIA_DIR)/lib"\
-	 -ljulia\
+	 -ljulia -lm\
          $(WLARGS)
 
 .PHONY: clean
