@@ -1,4 +1,6 @@
 main
-cg.dylib
-cg.so
-cg.dll
+*.dylib
+*.so
+*.dll
+*.o
+*~
