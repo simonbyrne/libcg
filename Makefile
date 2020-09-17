@@ -19,7 +19,7 @@ LDFLAGS+=-L$(JULIA_DIR)/lib -L. -ljulia -lm $(WLARGS)
 
 .DEFAULT_GOAL := main
 
-libcg.$(DLEXT): cg.jl build.jl
+libcg.$(DLEXT): cg.jl build.jl precompile.jl
 	julia --startup-file=no --project build.jl
 
 main.o: main.c
