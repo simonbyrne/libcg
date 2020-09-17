@@ -4,4 +4,4 @@
 
 
 // prototype of the C entry points in our application
-int julia_apply(int (*fptr)(double*,double*), double *y, double *x, size_t len);
+int julia_cg(int (*fptr)(double*,double*), double *y, double *x, size_t len);

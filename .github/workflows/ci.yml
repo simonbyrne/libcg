@@ -37,4 +37,4 @@ jobs:
         run: make JULIA_DIR=C:\julia CC=gcc
         if: matrix.os == 'windows-latest'
       - name: run
-        run: ./main
+        run: ./main --trace-compile=stderr
