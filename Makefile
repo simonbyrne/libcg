@@ -26,7 +26,7 @@ main.o: main.c
 	$(CC) -c -o $@ $^ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"libcg.$(DLEXT)\"
 
 $(MAIN): main.o libcg.$(DLEXT)
-	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -lcg
+	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) -lcg
 
 .PHONY: clean
 clean:
