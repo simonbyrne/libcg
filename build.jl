@@ -1,6 +1,9 @@
 using PackageCompiler, Libdl
 
 PackageCompiler.create_sysimage(Symbol[:IterativeSolvers];
-                                precompile_statements_file="precompile.jl",
+                                project="lib",
+                                precompile_statements_file="lib/precompile.jl",
                                 sysimage_path="libcg.$(Libdl.dlext)",
-                                script="cg.jl")
+                                script="lib/cg.jl",
+                                incremental=false,
+                                filter_stdlibs=true)

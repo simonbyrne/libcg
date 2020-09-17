@@ -38,3 +38,5 @@ jobs:
         if: matrix.os == 'windows-latest'
       - name: run
         run: ./main --trace-compile=stderr
+      - name: library size (MB)
+        run: du -sm libcg.+(dylib|so|dll)
