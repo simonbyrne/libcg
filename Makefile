@@ -23,11 +23,11 @@ libcg.$(DLEXT): cg.jl build.jl
 	julia --startup-file=no --project build.jl
 
 main.o: main.c
-	$(CC) -c -o $@ $^ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"libcg.$(DLEXT)\"
+	$(CC) $^ -c -o $@ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"libcg.$(DLEXT)\"
 
 $(MAIN): main.o libcg.$(DLEXT)
 	$(CC) -o $@ $< $(CFLAGS) $(LDFLAGS) -lcg
 
 .PHONY: clean
 clean:
-	$(RM) *.dylib *.so *.dll main
+	$(RM) *~ *.o *.$(DLEXT) main
