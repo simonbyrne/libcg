@@ -1,4 +1,3 @@
-
 OS := $(shell uname)
 DLEXT := $(shell julia -e 'using Libdl; print(Libdl.dlext)')
 
@@ -15,20 +14,19 @@ else
   WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN"
 endif
 
+CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia
+LDFLAGS+=-L$(JULIA_DIR)/lib -L. -ljulia -lm $(WLARGS)
 
 .DEFAULT_GOAL := main
 
-
-cg.$(DLEXT): cg.jl build.jl
+libcg.$(DLEXT): cg.jl build.jl
 	julia --startup-file=no --project build.jl
 
-$(MAIN): main.c cg.$(DLEXT)
-	$(CC) -o $@ $^ -O2 -fPIE\
-         -DJULIAC_PROGRAM_LIBNAME=\"cg.$(DLEXT)\"\
-	 -I"$(JULIA_DIR)/include/julia"\
-	 -L"$(JULIA_DIR)/lib"\
-	 -ljulia -lm\
-         $(WLARGS)
+main.o: main.c
+	$(CC) -c -o $@ $^ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"libcg.$(DLEXT)\"
+
+$(MAIN): main.o libcg.$(DLEXT)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) -lcg
 
 .PHONY: clean
 clean:
