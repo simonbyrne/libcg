@@ -19,8 +19,8 @@ LDFLAGS+=-L$(JULIA_DIR)/lib -L. -ljulia -lm $(WLARGS)
 
 .DEFAULT_GOAL := main
 
-libcg.$(DLEXT): build.jl lib/cg.jl lib/precompile.jl
-	julia --startup-file=no --project build.jl
+libcg.$(DLEXT): build/build.jl src/CG.jl generate_precompile.jl
+	julia --startup-file=no --project=build $<
 
 main.o: main.c
 	$(CC) $^ -c -o $@ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"libcg.$(DLEXT)\"

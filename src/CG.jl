@@ -1,4 +1,4 @@
-#module CG
+module CG
 
 using IterativeSolvers, LinearAlgebra
 
@@ -37,4 +37,4 @@ Base.@ccallable function julia_cg(fptr::Ptr{Cvoid}, cx::Ptr{Cdouble}, cb::Ptr{Cd
     return 0
 end
 
-#end # module
+end # module
