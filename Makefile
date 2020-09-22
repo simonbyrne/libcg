@@ -21,6 +21,7 @@ LDFLAGS+=-L$(JULIA_DIR)/lib -L. -ljulia -lm $(WLARGS)
 .DEFAULT_GOAL := main
 
 libcg.$(DLEXT): build/build.jl src/CG.jl generate_precompile.jl
+	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build $<
 
