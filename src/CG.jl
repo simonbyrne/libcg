@@ -25,6 +25,10 @@ end
 
 
 Base.@ccallable function julia_cg(fptr::Ptr{Cvoid}, cx::Ptr{Cdouble}, cb::Ptr{Cdouble}, len::Csize_t)::Cint
+    _julia_cg(fptr, cx, cb, len)
+end
+
+function _julia_cg(fptr, cx, cb, len)
     try
         x = unsafe_wrap(Array, cx, (len,))
         b = unsafe_wrap(Array, cb, (len,))
