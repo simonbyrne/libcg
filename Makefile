@@ -1,7 +1,8 @@
 OS := $(shell uname)
 DLEXT := $(shell julia -e 'using Libdl; print(Libdl.dlext)')
 
-JULIA_DIR := $(shell julia -e 'print(dirname(Sys.BINDIR))')
+JULIA := julia
+JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
 MAIN := main
 
 ifeq ($(OS), WINNT)
@@ -19,8 +20,10 @@ LDFLAGS+=-L$(JULIA_DIR)/lib -L. -ljulia -lm $(WLARGS)
 
 .DEFAULT_GOAL := main
 
-libcg.$(DLEXT): build.jl lib/cg.jl lib/precompile.jl
-	julia --startup-file=no --project build.jl
+libcg.$(DLEXT): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
+	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
+	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
+	$(JULIA) --startup-file=no --project=build $<
 
 main.o: main.c
 	$(CC) $^ -c -o $@ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"libcg.$(DLEXT)\"
