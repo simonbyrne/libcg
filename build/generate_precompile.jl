@@ -17,4 +17,4 @@ end
 b = ones(len)
 x = zeros(len)
 
-CG._julia_cg(@cfunction(laplace,Cint,(Ptr{Float64}, Ptr{Float64})), pointer(x), pointer(b), Csize_t(len))
+CG.julia_cg(@cfunction(laplace,Cint,(Ptr{Float64}, Ptr{Float64})), pointer(x), pointer(b), Csize_t(len))
