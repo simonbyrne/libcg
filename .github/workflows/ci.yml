@@ -30,7 +30,7 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: julia-actions/julia-buildpkg@latest          
       - name: make
-        run: make JULIA_DIR=$HOME/julia
+        run: make
         if: matrix.os != 'windows-latest'
       - name: make (win)
         run: make JULIA_DIR=C:\julia CC=gcc
