@@ -5,3 +5,4 @@ main
 *.o
 *~
 Manifest.toml
+/target

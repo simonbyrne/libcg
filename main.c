@@ -3,8 +3,7 @@
 #include <math.h>
 
 // Julia headers (for initialization and gc commands)
-#include "uv.h"
-#include "julia.h"
+#include "julia_init.h"
 #include "cg.h"
 
 JULIA_DEFINE_FAST_TLS()
@@ -25,13 +24,7 @@ int laplace(double *y, double *x)
 
 int main(int argc, char *argv[])
 {
-  // initialization of libuv and julia
-  uv_setup_args(argc, argv);
-  libsupport_init();
-  jl_parse_opts(&argc, &argv);
-  // JULIAC_PROGRAM_LIBNAME defined on command-line for compilation
-  jl_options.image_file = JULIAC_PROGRAM_LIBNAME;
-  julia_init(JL_IMAGE_JULIA_HOME);
+  init_julia(argc, argv);
 
   int ret;
   double *b = (double *)malloc(len * sizeof(double));
@@ -67,6 +60,6 @@ int main(int argc, char *argv[])
 
   // Cleanup and gracefully exit
  done:
-  jl_atexit_hook(ret);
+  shutdown_julia(ret);
   return ret;
 }
