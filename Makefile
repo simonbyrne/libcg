@@ -1,8 +1,8 @@
 OS := $(shell uname)
-DLEXT := $(shell julia -e 'using Libdl; print(Libdl.dlext)')
 
 JULIA := julia
 JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
+DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
 MAIN := main
 
 ifeq ($(OS), WINNT)
