@@ -3,7 +3,7 @@
 #include <math.h>
 
 // Julia headers (for initialization and gc commands)
-#include "juliainit.h"
+#include "julia_init.h"
 #include "cg.h"
 
 JULIA_DEFINE_FAST_TLS()
@@ -24,10 +24,7 @@ int laplace(double *y, double *x)
 
 int main(int argc, char *argv[])
 {
-  // Can use either of these calls to init_julia()
-
-//  init_julia(argc, argv, (void (*)())&julia_cg, NULL);
-  init_julia(argc, argv, NULL, JULIAC_PROGRAM_LIBNAME);
+  init_julia(argc, argv);
 
   int ret;
   double *b = (double *)malloc(len * sizeof(double));
