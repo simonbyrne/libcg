@@ -1,6 +1,6 @@
 using PackageCompiler, Libdl
 
-target_dir = get(ENV, "OUTDIR", "./target2")
+target_dir = get(ENV, "OUTDIR", "./target")
 
 println("Creating library in $target_dir")
 
