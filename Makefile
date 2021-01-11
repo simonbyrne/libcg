@@ -4,7 +4,7 @@ JULIA := julia
 JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
 
-OUTDIR := ./target
+OUTDIR := $(shell realpath ./target)
 LIBDIR := $(OUTDIR)/lib
 LIBCG := libcg.$(DLEXT)
 LIB_LIBCG = $(LIBDIR)/$(LIBCG)
@@ -34,7 +34,7 @@ $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompi
 	JULIA_DEBUG=PackageCompiler OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
 
 main.o: main.c $(LIBCG_INCLUDES)
-	$(CC) $< -c -o $@ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"$(LIBCG)\"
+	$(CC) $< -c -o $@ $(CFLAGS)
 
 $(MAIN): main.o $(LIB_LIBCG)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
