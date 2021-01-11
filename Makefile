@@ -1,6 +1,6 @@
 OS := $(shell uname)
 
-JULIA := julia
+JULIA := julia1.5
 JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
 
@@ -40,10 +40,7 @@ $(MAIN): main.o $(LIB_LIBCG)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
-	install_name_tool -change $(LIBCG) $(LIB_LIBCG) $@
-	## Alternatively, if we install the lib directory somewhere in the library
-	## search path, we could run
-	# install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
+	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
 endif
 
 .PHONY: clean
