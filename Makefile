@@ -18,9 +18,9 @@ ifeq ($(OS), WINNT)
 endif
 
 ifeq ($(OS), Darwin)
-  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path"
+  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path" -Wl,-rpath,"$(LIBDIR)"
 else
-  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN"
+  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN" -Wl,-rpath,"$(LIBDIR)"
 endif
 
 CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
@@ -44,10 +44,6 @@ ifeq ($(OS), Darwin)
 	## Alternatively, if we install the lib directory somewhere in the library
 	## search path, we could run
 	# install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
-else ifeq ($(OS), WINNT)
-	echo "Please add $(LIBDIR) to your PATH before running $(MAIN)"
-else
-	echo "Please add $(LIBDIR) to LD_LIBRARY_PATH before running $(MAIN)"
 endif
 
 .PHONY: clean
