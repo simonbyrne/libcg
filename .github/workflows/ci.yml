@@ -38,5 +38,5 @@ jobs:
       - name: run
         run: ./main --trace-compile=stderr
       - name: library size
-        run: ls -lh libcg.*
+        run: ls -lh target/lib/libcg.*
         shell: bash
