@@ -18,9 +18,9 @@ ifeq ($(OS), WINNT)
 endif
 
 ifeq ($(OS), Darwin)
-  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path" -Wl,-rpath,"$(LIBDIR)"
+  WLARGS := -Wl,-rpath,"$(LIBDIR)" -Wl,-rpath,"@executable_path"
 else
-  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN" -Wl,-rpath,"$(LIBDIR)"
+  WLARGS := -Wl,-rpath,"$(LIBDIR):$$ORIGIN" 
 endif
 
 CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
@@ -46,3 +46,4 @@ endif
 .PHONY: clean
 clean:
 	$(RM) *~ *.o *.$(DLEXT) main
+	$(RM) -Rf $(OUTDIR)
