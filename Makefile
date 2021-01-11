@@ -4,7 +4,7 @@ JULIA := julia
 JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
 
-OUTDIR := $(shell realpath ./target)
+OUTDIR := ${CURDIR}/target
 LIBDIR := $(OUTDIR)/lib
 LIBCG := libcg.$(DLEXT)
 LIB_LIBCG = $(LIBDIR)/$(LIBCG)
