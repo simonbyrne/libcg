@@ -24,7 +24,7 @@ else
 endif
 
 CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
-LDFLAGS+=-L$(JULIA_DIR)/lib -L$(LIBDIR) -ljulia -lm $(WLARGS)
+LDFLAGS+=-L$(LIBDIR) -ljulia -lm $(WLARGS)
 
 .DEFAULT_GOAL := $(MAIN)
 
