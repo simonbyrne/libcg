@@ -1,6 +1,6 @@
 OS := $(shell uname)
 
-JULIA := julia1.5
+JULIA := julia
 JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
 
@@ -31,7 +31,7 @@ LDFLAGS+=-L$(JULIA_DIR)/lib -L$(LIBDIR) -ljulia -lm $(WLARGS)
 $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
-	OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
+	JULIA_DEBUG=PackageCompiler OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
 
 main.o: main.c $(LIBCG_INCLUDES)
 	$(CC) $< -c -o $@ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"$(LIBCG)\"
