@@ -6,7 +6,7 @@ DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
 
 OUTDIR := ./target
 LIBDIR := $(OUTDIR)/lib
-LIBCG := libCG.$(DLEXT)
+LIBCG := libcg.$(DLEXT)
 LIB_LIBCG = $(LIBDIR)/$(LIBCG)
 INCLUDE_DIR = $(OUTDIR)/include
 LIBCG_INCLUDES = $(INCLUDE_DIR)/julia_init.h $(INCLUDE_DIR)/cg.h
