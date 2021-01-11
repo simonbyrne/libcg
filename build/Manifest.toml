@@ -59,7 +59,9 @@ uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 
 [[PackageCompiler]]
 deps = ["Libdl", "Pkg", "UUIDs"]
-path = "/Users/kevinsquire/.julia/dev/PackageCompiler"
+git-tree-sha1 = "7e2a22eb1e265ca7a363d0842e050a7f84b72e11"
+repo-rev = "kms/create_library"
+repo-url = "https://github.com/kmsquire/PackageCompiler.jl.git"
 uuid = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
 version = "1.2.4"
 
