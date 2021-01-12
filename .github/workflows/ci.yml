@@ -32,35 +32,33 @@ jobs:
           arch: ${{ matrix.arch }}
       - uses: julia-actions/julia-buildpkg@latest          
       - name: Print workspace path
-        run: echo $GITHUB_WORKSPACE && pwd && echo ${{github.ref}}
+        run: |
+          echo GITHUB_WORKSPACE=$env:GITHUB_WORKSPACE
+          echo GITHUB_PATH=$env:GITHUB_PATH
+          echo PATH=$env:PATH
+          echo "$env:GITHUB_WORKSPACE/target/lib" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "$env:GITHUB_WORKSPACE/target/lib/julia" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo GITHUB_PATH=$env:GITHUB_PATH
+          echo PATH=$env:PATH
+        if: matrix.os == 'windows-latest'
       - name: make
         run: make
         if: matrix.os != 'windows-latest'
       - name: make (win)
         run: make JULIA_DIR=C:\julia CC=gcc
         if: matrix.os == 'windows-latest'
-      # - name: run
-      #   run: ./main --trace-compile=stderr
-      #   if: matrix.os != 'windows-latest'
-      - name: run (ubuntu)
-        run: |
-          ls "$GITHUB_WORKSPACE/target/lib"
-          ldd ./main
-          ./main --trace-compile=stderr
-        if: matrix.os == 'ubuntu-latest'
-      - name: run (macOS)
-        run: |
-          ls "$GITHUB_WORKSPACE/target/lib"
-          otool -L ./main
-          ./main --trace-compile=stderr
-        if: matrix.os == 'macOS-latest'
+      - name: run
+        run: ./main --trace-compile=stderr
+        if: matrix.os != 'windows-latest'
       - name: run (win)
         run: |
-          echo "$Env:GITHUB_WORKSPACE/target/lib" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
-          echo "$Env:GITHUB_WORKSPACE/target/lib/julia" | Out-File -FilePath $Env:GITHUB_PATH -Encoding utf8 -Append
-          echo "GITHUB_PATH=$env:GITHUB_PATH"
-          echo "PATH=$env:PATH"
-          echo "Path=$env:Path"
+          echo GITHUB_WORKSPACE=$env:GITHUB_WORKSPACE
+          echo GITHUB_PATH=$env:GITHUB_PATH
+          echo PATH=$env:PATH
+          echo "$env:GITHUB_WORKSPACE/target/lib" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "$env:GITHUB_WORKSPACE/target/lib/julia" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo GITHUB_PATH=$env:GITHUB_PATH
+          echo PATH=$env:PATH
           ./main --trace-compile=stderr
         if: matrix.os == 'windows-latest'
       - name: library size

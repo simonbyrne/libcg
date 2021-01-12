@@ -20,10 +20,16 @@ endif
 
 .DEFAULT_GOAL := $(MAIN)
 
+WLARGS := -Wl,-rpath,"$(LIBDIR)"
+
+ifeq ($(ADD_JULIA_INTERNAL), true)
+  WLARGS += -Wl,-rpath,"$(LIBDIR)/julia"
+endif
+
 ifeq ($(OS), Darwin)
-  WLARGS := -Wl,-rpath,"$(LIBDIR)" -Wl,-rpath,"$(LIBDIR)/julia" -Wl,-rpath,"@executable_path"
+  WLARGS += -Wl,-rpath,"@executable_path"
 else ifneq ($(OS), WINNT)
-  WLARGS := -Wl,-rpath,"$(LIBDIR):$(LIBDIR)/julia:$$ORIGIN" 
+  WLARGS += -Wl,-rpath,"$$ORIGIN"
 endif
 
 ifeq ($(ADD_JULIA_INTERNAL), true)
@@ -31,7 +37,7 @@ ifeq ($(ADD_JULIA_INTERNAL), true)
 endif
 
 CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
-LDFLAGS+=-L$(LIBDIR) $(WLARGS) -lm -ljulia $(LIB_JULIA_INTERNAL)
+LDFLAGS+=-lm -L$(LIBDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
 
 $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -45,7 +51,7 @@ $(MAIN): main.o $(LIB_LIBCG)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
-	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@efw
+	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
 endif
 ifeq ($(OS), WINNT)
   ifeq ($(ADD_JULIA_INTERNAL), true)
