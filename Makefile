@@ -21,9 +21,9 @@ endif
 .DEFAULT_GOAL := $(MAIN)
 
 ifeq ($(OS), Darwin)
-  WLARGS := -Wl,-rpath,"$(LIBDIR)" -Wl,-rpath,"@executable_path"
-else
-  WLARGS := -Wl,-rpath,"$(LIBDIR):$$ORIGIN" 
+  WLARGS := -Wl,-rpath,"$(LIBDIR)" -Wl,-rpath,"$(LIBDIR)/julia" -Wl,-rpath,"@executable_path"
+else ifneq ($(OS), WINNT)
+  WLARGS := -Wl,-rpath,"$(LIBDIR):$(LIBDIR)/julia:$$ORIGIN" 
 endif
 
 ifeq ($(ADD_JULIA_INTERNAL), true)
@@ -45,9 +45,14 @@ $(MAIN): main.o $(LIB_LIBCG)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
-	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
-else ifeq ($(OS), WINNT)
+	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@efw
+endif
+ifeq ($(OS), WINNT)
+  ifeq ($(ADD_JULIA_INTERNAL), true)
+	echo "Please add $(LIBDIR) and $(LIBDIR)/julia to your PATH before running $(MAIN)"
+  else
 	echo "Please add $(LIBDIR) to your PATH before running $(MAIN)"
+  endif
 endif
 
 .PHONY: clean
