@@ -19,7 +19,7 @@ jobs:
           # - 'nightly'
         os:
           - ubuntu-latest
-          - macOS-latest
+          # - macOS-latest
           - windows-latest
         arch:
           - x64
@@ -35,10 +35,11 @@ jobs:
         run: |
           echo GITHUB_WORKSPACE=$env:GITHUB_WORKSPACE
           echo GITHUB_PATH=$env:GITHUB_PATH
-          echo PATH=$env:PATH
+          cat $env:GITHUB_PATH
           echo "$env:GITHUB_WORKSPACE/target/lib" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           echo "$env:GITHUB_WORKSPACE/target/lib/julia" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           echo GITHUB_PATH=$env:GITHUB_PATH
+          cat $env:GITHUB_PATH
           echo PATH=$env:PATH
         if: matrix.os == 'windows-latest'
       - name: make
@@ -50,14 +51,19 @@ jobs:
       - name: run
         run: ./main --trace-compile=stderr
         if: matrix.os != 'windows-latest'
+      - name: Check RPATH
+        run: readelf ./main | grep RPATH
+        if: matrix.os == 'ubuntu-latest'
       - name: run (win)
         run: |
           echo GITHUB_WORKSPACE=$env:GITHUB_WORKSPACE
           echo GITHUB_PATH=$env:GITHUB_PATH
+          cat $env:GITHUB_PATH
           echo PATH=$env:PATH
           echo "$env:GITHUB_WORKSPACE/target/lib" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           echo "$env:GITHUB_WORKSPACE/target/lib/julia" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           echo GITHUB_PATH=$env:GITHUB_PATH
+          cat $env:GITHUB_PATH
           echo PATH=$env:PATH
           ./main --trace-compile=stderr
         if: matrix.os == 'windows-latest'
