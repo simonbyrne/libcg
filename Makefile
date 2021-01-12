@@ -1,8 +1,9 @@
 OS := $(shell uname)
 
-JULIA := julia
+JULIA ?= julia
 JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
+LIB_JULIA_INTERNAL := $(shell $(JULIA) -e 'if VERSION >= v"1.6.0-DEV.1673" print("-ljulia-internal") end')
 
 OUTDIR := ${CURDIR}/target
 LIBDIR := $(OUTDIR)/lib
@@ -24,14 +25,14 @@ else
 endif
 
 CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
-LDFLAGS+=-L$(LIBDIR) -ljulia -lm $(WLARGS)
+LDFLAGS+=-L$(LIBDIR) $(WLARGS) -lm -ljulia $(LIB_JULIA_INTERNAL)
 
 .DEFAULT_GOAL := $(MAIN)
 
 $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
-	JULIA_DEBUG=PackageCompiler OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
+	OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
 
 main.o: main.c $(LIBCG_INCLUDES)
 	$(CC) $< -c -o $@ $(CFLAGS)
