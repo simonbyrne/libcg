@@ -41,6 +41,8 @@ $(MAIN): main.o $(LIB_LIBCG)
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
 	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
+else ifeq ($(OS), WINNT)
+	echo "Please add $(LIBDIR) to your PATH before running $(MAIN)"
 endif
 
 .PHONY: clean
