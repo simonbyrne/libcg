@@ -15,7 +15,7 @@ jobs:
       matrix:
         version:
           - '1.5'
-          # - '1.6'
+          - '^1.6.0-0'
           # - 'nightly'
         os:
           - ubuntu-latest
@@ -23,6 +23,7 @@ jobs:
           - windows-latest
         arch:
           - x64
+          # - x86
     steps:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
@@ -40,9 +41,9 @@ jobs:
         run: ./main --trace-compile=stderr
         if: matrix.os != 'windows-latest'
       - name: run (win)
-        env:
-          PATH: "$GITHUB_WORKSPACE/target/lib;$PATH"
-        run: ./main --trace-compile=stderr
+        run: |
+          echo "$GITHUB_WORKSPACE/target/lib" >> $GITHUB_PATH
+          ./main --trace-compile=stderr
         if: matrix.os == 'windows-latest'
       - name: library size
         run: ls -lh target/lib/libcg.*
