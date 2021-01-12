@@ -38,6 +38,8 @@ main.o: main.c $(LIBCG_INCLUDES)
 	$(CC) $< -c -o $@ $(CFLAGS)
 
 $(MAIN): main.o $(LIB_LIBCG)
+	ls -al $(OUTDIR)
+	ls -al $(LIBDIR)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
