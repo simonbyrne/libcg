@@ -16,7 +16,7 @@ jobs:
         version:
           - '1.5'
           # - '1.6'
-          - 'nightly'
+          # - 'nightly'
         os:
           - ubuntu-latest
           - macOS-latest
@@ -38,6 +38,12 @@ jobs:
         if: matrix.os == 'windows-latest'
       - name: run
         run: ./main --trace-compile=stderr
+        if: matrix.os != 'windows-latest'
+      - name: run (win)
+        env:
+          PATH: "$GITHUB_WORKSPACE/target/lib;$PATH"
+        run: ./main --trace-compile=stderr
+        if: matrix.os == 'windows-latest'
       - name: library size
         run: ls -lh target/lib/libcg.*
         shell: bash
