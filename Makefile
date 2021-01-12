@@ -1,9 +1,9 @@
 OS := $(shell uname)
 
 JULIA ?= julia
-JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
-DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
-ADD_JULIA_INTERNAL := $(shell $(JULIA) -e 'print(VERSION >= v"1.6.0-DEV.1673")')
+JULIA_DIR := $(shell $(JULIA) --startup-file=no -e 'print(dirname(Sys.BINDIR))')
+DLEXT := $(shell $(JULIA) --startup-file=no -e 'using Libdl; print(Libdl.dlext)')
+ADD_JULIA_INTERNAL := $(shell $(JULIA) --startup-file=no -e 'print(VERSION >= v"1.6.0-DEV.1673")')
 
 OUTDIR := ${CURDIR}/target
 LIBDIR := $(OUTDIR)/lib
