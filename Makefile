@@ -3,7 +3,7 @@ OS := $(shell uname)
 JULIA ?= julia
 JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) -e 'using Libdl; print(Libdl.dlext)')
-LIB_JULIA_INTERNAL := $(shell $(JULIA) -e 'if VERSION >= v"1.6.0-DEV.1673" print("-ljulia-internal") end')
+ADD_JULIA_INTERNAL := $(shell $(JULIA) -e 'print(VERSION >= v"1.6.0-DEV.1673")')
 
 OUTDIR := ${CURDIR}/target
 LIBDIR := $(OUTDIR)/lib
@@ -18,16 +18,20 @@ ifeq ($(OS), WINNT)
   MAIN := $(MAIN).exe
 endif
 
+.DEFAULT_GOAL := $(MAIN)
+
 ifeq ($(OS), Darwin)
   WLARGS := -Wl,-rpath,"$(LIBDIR)" -Wl,-rpath,"@executable_path"
 else
   WLARGS := -Wl,-rpath,"$(LIBDIR):$$ORIGIN" 
 endif
 
+ifeq ($(ADD_JULIA_INTERNAL), true)
+  LIB_JULIA_INTERNAL := -L$(LIBDIR)/julia -ljulia-internal
+endif
+
 CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
 LDFLAGS+=-L$(LIBDIR) $(WLARGS) -lm -ljulia $(LIB_JULIA_INTERNAL)
-
-.DEFAULT_GOAL := $(MAIN)
 
 $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
@@ -38,8 +42,6 @@ main.o: main.c $(LIBCG_INCLUDES)
 	$(CC) $< -c -o $@ $(CFLAGS)
 
 $(MAIN): main.o $(LIB_LIBCG)
-	ls -al $(OUTDIR)
-	ls -al $(LIBDIR)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
