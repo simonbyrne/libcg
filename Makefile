@@ -1,6 +1,5 @@
-OS := $(shell uname)
-
 JULIA ?= julia
+OS := $(shell $(JULIA) --startup-file=no -e 'print(Base.BinaryPlatforms.os())')
 JULIA_DIR := $(shell $(JULIA) --startup-file=no -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) --startup-file=no -e 'using Libdl; print(Libdl.dlext)')
 ADD_JULIA_INTERNAL := $(shell $(JULIA) --startup-file=no -e 'print(VERSION >= v"1.6.0-DEV.1673")')
@@ -14,7 +13,7 @@ LIBCG_INCLUDES = $(INCLUDE_DIR)/julia_init.h $(INCLUDE_DIR)/cg.h
 
 MAIN := main
 
-ifeq ($(OS), WINNT)
+ifeq ($(OS), windows)
   MAIN := $(MAIN).exe
 endif
 
@@ -26,9 +25,9 @@ ifeq ($(ADD_JULIA_INTERNAL), true)
   WLARGS += -Wl,-rpath,"$(LIBDIR)/julia"
 endif
 
-ifeq ($(OS), Darwin)
+ifeq ($(OS), macos)
   WLARGS += -Wl,-rpath,"@executable_path"
-else ifneq ($(OS), WINNT)
+else ifneq ($(OS), windows)
   WLARGS += -Wl,-rpath,"$$ORIGIN"
 endif
 
@@ -40,6 +39,7 @@ CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
 LDFLAGS+=-lm -L$(LIBDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
 
 $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
+	echo "OS: $(OS)"
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
 	OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
@@ -49,12 +49,11 @@ main.o: main.c $(LIBCG_INCLUDES)
 
 $(MAIN): main.o $(LIB_LIBCG)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
-	echo $(OS)
-ifeq ($(OS), Darwin)
+ifeq ($(OS), macos)
 	# Make sure we can find and use the shared library on OSX
 	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
 endif
-ifeq ($(OS), WINNT)
+ifeq ($(OS), windows)
   ifeq ($(ADD_JULIA_INTERNAL), true)
 	echo "Please add $(LIBDIR) and $(LIBDIR)/julia to your PATH before running $(MAIN)"
   else
