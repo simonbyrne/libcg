@@ -17,10 +17,10 @@ LIB_LIBCG = $(LIBDIR)/$(LIBCG)
 INCLUDE_DIR = $(OUTDIR)/include
 LIBCG_INCLUDES = $(INCLUDE_DIR)/julia_init.h $(INCLUDE_DIR)/cg.h
 
-MAIN := main
+MAIN := $(OUTDIR)/main
 
 ifeq ($(OS), Windows)
-  MAIN := $(MAIN).exe
+  MAIN := $(LIBDIR)/main.exe
 endif
 
 .DEFAULT_GOAL := $(MAIN)
