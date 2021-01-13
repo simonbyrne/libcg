@@ -1,5 +1,11 @@
+ifeq ($(OS),Windows_NT)     # is Windows_NT on XP, 2000, 7, Vista, 10...
+    OS := Windows
+else
+    OS := $(shell uname)  # same as "uname -s"
+endif
+$(info $(OS) detected)
+
 JULIA ?= julia
-OS := $(shell $(JULIA) --startup-file=no -e 'print(Base.BinaryPlatforms.os())')
 JULIA_DIR := $(shell $(JULIA) --startup-file=no -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) --startup-file=no -e 'using Libdl; print(Libdl.dlext)')
 ADD_JULIA_INTERNAL := $(shell $(JULIA) --startup-file=no -e 'print(VERSION >= v"1.6.0-DEV.1673")')
@@ -25,7 +31,7 @@ ifeq ($(ADD_JULIA_INTERNAL), true)
   WLARGS += -Wl,-rpath,"$(LIBDIR)/julia"
 endif
 
-ifeq ($(OS), macos)
+ifeq ($(OS), Darwin)
   WLARGS += -Wl,-rpath,"@executable_path"
 else ifneq ($(OS), windows)
   WLARGS += -Wl,-rpath,"$$ORIGIN"
@@ -49,7 +55,7 @@ main.o: main.c $(LIBCG_INCLUDES)
 
 $(MAIN): main.o $(LIB_LIBCG)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
-ifeq ($(OS), macos)
+ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
 	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
 endif
