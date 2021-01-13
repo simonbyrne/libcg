@@ -18,12 +18,12 @@ jobs:
           - '^1.6.0-0'
           # - 'nightly'
         os:
-          - ubuntu-latest
+          # - ubuntu-latest
           # - macOS-latest
           - windows-latest
         arch:
           - x64
-          # - x86
+          - x86
     steps:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
@@ -34,21 +34,17 @@ jobs:
       - name: make
         run: make
         if: matrix.os != 'windows-latest'
-      - name: Check RPATH (linux)
-        run: |
-          readelf -d target/main
-          readelf -d target/lib/libcg.so
-          readelf -d target/lib/libjulia.so
-          ls -alR /home/runner/work/libcg/libcg/target/lib
-        if: matrix.os == 'ubuntu-latest'
-      - name: make (win)
-        run: make JULIA_DIR=C:\julia CC=gcc
-        if: matrix.os == 'windows-latest'
       - name: run
         run: target/main --trace-compile=stderr
         if: matrix.os != 'windows-latest'
+      - name: make (win)
+        run: make JULIA_DIR=C:\julia CC=gcc
+        if: matrix.os == 'windows-latest'
+      - name: List output dir (win)
+        run: ls -alR target/bin
+        if: matrix.os == 'windows-latest'
       - name: run (win)
-        run: .\target\bin\main.exe --trace-compile=stderr
+        run: target\bin\main.exe --trace-compile=stderr
         if: matrix.os == 'windows-latest'
       - name: library size
         run: ls -lh target/lib/libcg.*
