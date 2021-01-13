@@ -49,6 +49,7 @@ main.o: main.c $(LIBCG_INCLUDES)
 
 $(MAIN): main.o $(LIB_LIBCG)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
+	echo $(OS)
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
 	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
