@@ -35,7 +35,9 @@ jobs:
         run: make
         if: matrix.os != 'windows-latest'
       - name: Check RPATH (linux)
-        run: readelf -d target/main
+        run: |
+          readelf -d target/main
+          ls -alR /home/runner/work/libcg/libcg/target/lib
         if: matrix.os == 'ubuntu-latest'
       - name: make (win)
         run: make JULIA_DIR=C:\julia CC=gcc
@@ -46,13 +48,13 @@ jobs:
       - name: run (win, julia 1.5)
         run: |
           echo "$env:GITHUB_WORKSPACE\target\lib" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          target/lib/main --trace-compile=stderr
+          .\target\lib\main.exe --trace-compile=stderr
         if: matrix.os == 'windows-latest' && matrix.version == '1.5'
       - name: run (win, julia 1.6)
         run: |
           echo "$env:GITHUB_WORKSPACE\target\lib" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           echo "$env:GITHUB_WORKSPACE\target\lib\julia" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          target/lib/main --trace-compile=stderr
+          .\target\lib\main.exe --trace-compile=stderr
         if: matrix.os == 'windows-latest' && matrix.version != '1.5'
       - name: library size
         run: ls -lh target/lib/libcg.*

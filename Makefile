@@ -25,16 +25,18 @@ endif
 
 .DEFAULT_GOAL := $(MAIN)
 
-WLARGS := -Wl,-rpath,"$(LIBDIR)"
+ifneq ($(OS), Windows)
+  WLARGS := -Wl,-rpath,"$(LIBDIR)"
 
-ifeq ($(ADD_JULIA_INTERNAL), true)
-  WLARGS += -Wl,-rpath,"$(LIBDIR)/julia"
-endif
+  ifeq ($(ADD_JULIA_INTERNAL), true)
+    WLARGS += -Wl,-rpath,"$(LIBDIR)/julia"
+  endif
 
-ifeq ($(OS), Darwin)
-  WLARGS += -Wl,-rpath,"@executable_path"
-else ifneq ($(OS), Windows)
-  WLARGS += -Wl,-rpath,"$$ORIGIN"
+  ifeq ($(OS), Darwin)
+    WLARGS += -Wl,-rpath,"@executable_path"
+  else
+    WLARGS += -Wl,-rpath,"$$ORIGIN"
+  endif
 endif
 
 ifeq ($(ADD_JULIA_INTERNAL), true)
