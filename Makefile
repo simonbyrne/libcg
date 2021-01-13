@@ -11,21 +11,18 @@ DLEXT := $(shell $(JULIA) --startup-file=no -e 'using Libdl; print(Libdl.dlext)'
 ADD_JULIA_INTERNAL := $(shell $(JULIA) --startup-file=no -e 'print(VERSION >= v"1.6.0-DEV.1673")')
 
 OUTDIR := ${CURDIR}/target
+BINDIR := $(OUTDIR)/bin
+INCLUDE_DIR = $(OUTDIR)/include
 LIBDIR := $(OUTDIR)/lib
-
-ifeq ($(OS), Windows)
-  LIBDIR := $(OUTDIR)/bin
-endif
+MAIN := $(BINDIR)/main
 
 LIBCG := libcg.$(DLEXT)
-LIB_LIBCG = $(LIBDIR)/$(LIBCG)
-INCLUDE_DIR = $(OUTDIR)/include
 LIBCG_INCLUDES = $(INCLUDE_DIR)/julia_init.h $(INCLUDE_DIR)/cg.h
-
-MAIN := $(OUTDIR)/main
+LIBCG_PATH := $(LIBDIR)/$(LIBCG)
 
 ifeq ($(OS), Windows)
-  MAIN := $(LIBDIR)/main.exe
+  LIBCG_PATH := $(BINDIR)/$(LIBCG)
+  MAIN := $(BINDIR)/main.exe
 endif
 
 .DEFAULT_GOAL := $(MAIN)
@@ -58,8 +55,8 @@ $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompi
 ifeq ($(OS), Windows)
   ifeq ($(ADD_JULIA_INTERNAL), true)
 	# In Github CI, this runs in powershell and bash
-	mv $(LIBDIR)/julia/* $(LIBDIR)
-	# move $(LIBDIR)/julia/* $(LIBDIR)
+	# mv $(BINDIR)/julia/* $(LIBDIR)
+	# move $(BINDIR)/julia/* $(LIBDIR)
   endif
 endif
 
