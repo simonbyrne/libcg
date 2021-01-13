@@ -47,12 +47,9 @@ jobs:
       - name: run
         run: target/main --trace-compile=stderr
         if: matrix.os != 'windows-latest'
-      - name: run (win, julia 1.5)
-        run: $env:Path = "$env:GITHUB_WORKSPACE\target\lib;" + $env:Path; & echo $env:Path; & .\target\lib\main.exe --trace-compile=stderr
-        if: matrix.os == 'windows-latest' && matrix.version == '1.5'
-      - name: run (win, julia 1.6)
-        run: $env:Path = "$env:GITHUB_WORKSPACE\target\lib;$env:GITHUB_WORKSPACE\target\lib\julia;" + $env:Path; & echo $env:Path; & .\target\lib\main.exe --trace-compile=stderr
-        if: matrix.os == 'windows-latest' && matrix.version != '1.5'
+      - name: run (win)
+        run: .\target\bin\main.exe --trace-compile=stderr
+        if: matrix.os == 'windows-latest'
       - name: library size
         run: ls -lh target/lib/libcg.*
         shell: bash

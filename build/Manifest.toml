@@ -27,7 +27,7 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
 [[PackageCompiler]]
 deps = ["Libdl", "Pkg", "UUIDs"]
-git-tree-sha1 = "5a3d3fa5ff7c63f4b0fc96f643c42ed667f2214c"
+git-tree-sha1 = "b28f89b4f545a8f34f2090aa812b7f14138cde5d"
 repo-rev = "kms/create_library"
 repo-url = "https://github.com/kmsquire/PackageCompiler.jl.git"
 uuid = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"

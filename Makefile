@@ -12,6 +12,11 @@ ADD_JULIA_INTERNAL := $(shell $(JULIA) --startup-file=no -e 'print(VERSION >= v"
 
 OUTDIR := ${CURDIR}/target
 LIBDIR := $(OUTDIR)/lib
+
+ifeq ($(OS), Windows)
+  LIBDIR := $(OUTDIR)/bin
+endif
+
 LIBCG := libcg.$(DLEXT)
 LIB_LIBCG = $(LIBDIR)/$(LIBCG)
 INCLUDE_DIR = $(OUTDIR)/include
@@ -50,6 +55,11 @@ $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompi
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
 	JULIA_DEBUG=PackageCompiler OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
+ifeq ($(OS), Windows)
+  ifeq ($(ADD_JULIA_INTERNAL), true)
+	move $(LIBDIR)/julia/* $(LIBDIR)
+  endif
+endif
 
 main.o: main.c $(LIBCG_INCLUDES)
 	$(CC) $< -c -o $@ $(CFLAGS)
