@@ -45,7 +45,6 @@ CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
 LDFLAGS+=-lm -L$(LIBDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
 
 $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
-	echo "OS: $(OS)"
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
 	OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
