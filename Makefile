@@ -1,7 +1,7 @@
 ifeq ($(OS),Windows_NT)     # is Windows_NT on XP, 2000, 7, Vista, 10...
     OS := Windows
 else
-    OS := $(shell uname)  # same as "uname -s"
+    OS := $(shell uname)
 endif
 $(info $(OS) detected)
 
