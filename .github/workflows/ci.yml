@@ -37,6 +37,8 @@ jobs:
       - name: Check RPATH (linux)
         run: |
           readelf -d target/main
+          readelf -d target/lib/libcg.so
+          readelf -d target/lib/libjulia.so.1.6
           ls -alR /home/runner/work/libcg/libcg/target/lib
         if: matrix.os == 'ubuntu-latest'
       - name: make (win)
