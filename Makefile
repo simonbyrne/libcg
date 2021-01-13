@@ -19,7 +19,7 @@ LIBCG_INCLUDES = $(INCLUDE_DIR)/julia_init.h $(INCLUDE_DIR)/cg.h
 
 MAIN := main
 
-ifeq ($(OS), windows)
+ifeq ($(OS), Windows)
   MAIN := $(MAIN).exe
 endif
 
@@ -33,7 +33,7 @@ endif
 
 ifeq ($(OS), Darwin)
   WLARGS += -Wl,-rpath,"@executable_path"
-else ifneq ($(OS), windows)
+else ifneq ($(OS), Windows)
   WLARGS += -Wl,-rpath,"$$ORIGIN"
 endif
 
@@ -59,7 +59,7 @@ ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
 	install_name_tool -change $(LIBCG) @rpath/$(LIBCG) $@
 endif
-ifeq ($(OS), windows)
+ifeq ($(OS), Windows)
   ifeq ($(ADD_JULIA_INTERNAL), true)
 	echo "Please add $(LIBDIR) and $(LIBDIR)/julia to your PATH before running $(MAIN)"
   else
