@@ -57,7 +57,9 @@ $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompi
 	JULIA_DEBUG=PackageCompiler OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
 ifeq ($(OS), Windows)
   ifeq ($(ADD_JULIA_INTERNAL), true)
-	move $(LIBDIR)/julia/* $(LIBDIR)
+	# In Github CI, this runs in powershell and bash
+	mv $(LIBDIR)/julia/* $(LIBDIR)
+	# move $(LIBDIR)/julia/* $(LIBDIR)
   endif
 endif
 
