@@ -42,11 +42,19 @@ ifneq ($(OS), Windows)
 endif
 
 ifeq ($(ADD_JULIA_INTERNAL), true)
-  LIB_JULIA_INTERNAL := -L$(LIBDIR)/julia -ljulia-internal
+  ifneq ($(OS), Windows)
+    LIB_JULIA_INTERNAL := -L$(LIBDIR)/julia -ljulia-internal
+  else
+    LIB_JULIA_INTERNAL := -L$(LIBDIR)/julia -L$(BINDIR)/julia -ljulia-internal
+  endif
 endif
 
 CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
-LDFLAGS+=-lm -L$(LIBDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
+ifneq ($(OS), Windows)
+  LDFLAGS+=-lm -L$(LIBDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
+else
+  LDFLAGS+=-lm -L$(LIBDIR) -L$(BINDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
+endif
 
 $(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
