@@ -45,7 +45,7 @@ ifeq ($(ADD_JULIA_INTERNAL), true)
   ifneq ($(OS), Windows)
     LIB_JULIA_INTERNAL := -L$(LIBDIR)/julia -ljulia-internal
   else
-    LIB_JULIA_INTERNAL := -L$(LIBDIR)/julia -L$(BINDIR)/julia -ljulia-internal
+    LIB_JULIA_INTERNAL := -L$(BINDIR)/julia -ljulia-internal
   endif
 endif
 
@@ -53,7 +53,7 @@ CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia -I$(INCLUDE_DIR)
 ifneq ($(OS), Windows)
   LDFLAGS+=-lm -L$(LIBDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
 else
-  LDFLAGS+=-lm -L$(LIBDIR) -L$(BINDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
+  LDFLAGS+=-lm -L$(BINDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
 endif
 
 $(LIBCG_PATH) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
