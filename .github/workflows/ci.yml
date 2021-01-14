@@ -43,6 +43,11 @@ jobs:
       - name: List output dir (win)
         run: dir -Recurse target
         if: matrix.os == 'windows-latest'
+      - name: dumpbin (win)
+        run: |
+          dumpbin /DEPENDENTS target\bin\main.exe
+          dumpbin /DEPENDENTS target\bin\libcg.dll
+        if: matrix.os == 'windows-latest'
       - name: run (win)
         run: target\bin\main.exe --trace-compile=stderr
         if: matrix.os == 'windows-latest'
