@@ -56,7 +56,7 @@ else
   LDFLAGS+=-lm -L$(LIBDIR) -L$(BINDIR) -ljulia $(LIB_JULIA_INTERNAL) $(WLARGS)
 endif
 
-$(LIB_LIBCG) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
+$(LIBCG_PATH) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
 	JULIA_DEBUG=PackageCompiler OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
@@ -71,7 +71,7 @@ endif
 main.o: main.c $(LIBCG_INCLUDES)
 	$(CC) $< -c -o $@ $(CFLAGS)
 
-$(MAIN): main.o $(LIB_LIBCG)
+$(MAIN): main.o $(LIBCG_PATH)
 	$(CC) -o $@ $< $(LDFLAGS) -lcg
 ifeq ($(OS), Darwin)
 	# Make sure we can find and use the shared library on OSX
