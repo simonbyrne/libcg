@@ -2,8 +2,8 @@ using PackageCompiler, Libdl
 
 target_dir = get(ENV, "OUTDIR", "./target")
 
-# Change Windows paths to use "\"
-target_dir = replace(target_dir, "/"=>"\\")
+# Change Windows paths to use "/"
+target_dir = replace(target_dir, "\\"=>"/")
 
 println("Creating library in $target_dir")
 
