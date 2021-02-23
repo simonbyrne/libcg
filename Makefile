@@ -34,9 +34,9 @@ LDFLAGS+=-lm -L$(LIBDIR) -ljulia $(WLARGS)
 
 $(LIBCG_PATH) $(LIBCG_INCLUDES): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
-	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
 	# Remove the following line when `create_library()` is merged upstream
 	$(JULIA) --startup-file=no --project=build -e 'import Pkg; Pkg.add(url="https://github.com/kmsquire/PackageCompiler.jl.git", rev="kms/create_library")'
+	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
 	JULIA_DEBUG=PackageCompiler OUTDIR=$(OUTDIR) $(JULIA) --startup-file=no --project=build $<
 
 main.o: main.c $(LIBCG_INCLUDES)
