@@ -40,12 +40,29 @@ fn main() {
     }
 
     let b = [1.0; 10];
-    let x = [0.0; 10];
+    let mut x = [0.0; 10];
 
     unsafe{
         let ret = julia_cg(laplace, x.as_ptr(), b.as_ptr(), 10);
     }
 
+
+    // check
+    //
+    let mut y = [0.0; 10];
+    unsafe {laplace(y.as_mut_ptr(), x.as_mut_ptr())};
+    let mut norm2 = 0.0;
+    let mut d:f64;
+    for i in 0..10{
+        d = b[i]-y[i];
+        norm2 += d*d;
+    }
+
+    println!("norm: {}", norm2);
+
+    if norm2 < 1e-10{
+        println!("success");
+    }
     unsafe {
         shutdown_julia(0);
     }
