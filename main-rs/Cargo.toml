@@ -1,5 +1,5 @@
 [package]
-name = "libcg"
+name = "main-rs"
 version = "0.1.0"
 authors = ["Nikhil Mitra <nikhil@secondspectrum.com>"]
 edition = "2018"
