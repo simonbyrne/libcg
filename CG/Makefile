@@ -32,9 +32,6 @@ LIB_PATH := $(LIB_DIR)/$(LIB_NAME)
 
 $(LIB_PATH) $(INCLUDES): $(BUILD)/build.jl $(DEPS)
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
-# The line below should be removed once https://github.com/JuliaLang/PackageCompiler.jl/pull/490 is merged
-# (and a new version of PackageCompiler.jl is released).
-	$(JULIA) --startup-file=no --project=$(BUILD) -e 'import Pkg; Pkg.add(url="https://github.com/kmsquire/PackageCompiler.jl.git", rev="kms/create_library")'
 	$(JULIA) --startup-file=no --project=$(BUILD) -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=$(BUILD) $< $(OUT_DIR)
 # Replace the previous line with the line below to enable verbose debugging during package build

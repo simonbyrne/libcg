@@ -6,7 +6,6 @@ in that directory that have been modified.
 If you wish to run it, update the template name in `template.jl`, and run
 
 ```bash
-julia --project=. -e 'import Pkg; Pkg.add(url="https://github.com/kmsquire/PkgTemplates.jl.git", rev="feature/package_compiler_library_creation")'
 julia --project=. -e "import Pkg; Pkg.instantiate()"
 julia --project=. template.jl
 ```
