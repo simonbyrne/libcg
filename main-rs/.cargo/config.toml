@@ -1,0 +1,16 @@
+[install]
+root = "../target"
+
+[target.'cfg(all(target_os="macos"))']
+rustflags = [
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../lib", 
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../lib/julia", 
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../../target/lib",
+    "-C", "link-arg=-Wl,-rpath,@executable_path/../../../target/lib/julia"
+]
+
+[target.'cfg(all(target_os="linux"))']
+rustflags = [
+    "-C", "link-arg=-Wl,-rpath,$ORIGIN/../lib:$ORIGIN/../lib/julia",
+    "-C", "link-arg=-Wl,-rpath,$ORIGIN/../../../target/lib:$ORIGIN/../../../target/lib/julia"
+]

@@ -1,36 +1,51 @@
-OS := $(shell uname)
-DLEXT := $(shell julia -e 'using Libdl; print(Libdl.dlext)')
+ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
-JULIA := julia
-JULIA_DIR := $(shell $(JULIA) -e 'print(dirname(Sys.BINDIR))')
-MAIN := main
+JULIA ?= julia
+DLEXT := $(shell $(JULIA) --startup-file=no -e 'using Libdl; print(Libdl.dlext)')
 
-ifeq ($(OS), WINNT)
-  MAIN := $(MAIN).exe
+PREFIX := $(ROOT_DIR)/target
+LIBDIR := $(PREFIX)/lib
+BINDIR := $(PREFIX)/bin
+MAIN_C := $(BINDIR)/main-c
+MAIN_RS := $(BINDIR)/main-rs
+
+ifeq ($(OS), Windows)
+  LIBDIR := $(BINDIR)
+  MAIN_C := $(BINDIR)/main-c.exe
+  MAIN_RS := $(BINDIR)/main-rs.exe
 endif
 
-ifeq ($(OS), Darwin)
-  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib" -Wl,-rpath,"@executable_path"
-else
-  WLARGS := -Wl,-rpath,"$(JULIA_DIR)/lib:$$ORIGIN"
-endif
+LIBCG := $(LIBDIR)/libcg.$(DLEXT)
 
-CFLAGS+=-O2 -fPIE -I$(JULIA_DIR)/include/julia
-LDFLAGS+=-L$(JULIA_DIR)/lib -L. -ljulia -lm $(WLARGS)
+SUBDIRS := CG main-c main-rs
 
-.DEFAULT_GOAL := main
+.PHONY: all $(SUBDIRS)
+all: $(MAIN_C) $(MAIN_RS)
+CG: $(LIBCG)
+main-c: $(MAIN_C)
+main-rs: $(MAIN_RS)
 
-libcg.$(DLEXT): build/build.jl src/CG.jl build/generate_precompile.jl build/additional_precompile.jl
-	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
-	$(JULIA) --startup-file=no --project=build -e 'using Pkg; Pkg.instantiate()'
-	$(JULIA) --startup-file=no --project=build $<
+$(LIBCG):
+	$(MAKE) -C CG
+	PREFIX=$(PREFIX) $(MAKE) -C CG install
 
-main.o: main.c
-	$(CC) $^ -c -o $@ $(CFLAGS) -DJULIAC_PROGRAM_LIBNAME=\"libcg.$(DLEXT)\"
+$(MAIN_C): $(LIBCG)
+	$(MAKE) -C main-c
+	PREFIX=$(PREFIX) $(MAKE) -C main-c install
 
-$(MAIN): main.o libcg.$(DLEXT)
-	$(CC) -o $@ $< $(LDFLAGS) -lcg
+$(MAIN_RS): $(LIBCG)
+	$(MAKE) -C main-rs build-release
+	PREFIX=$(PREFIX) $(MAKE) -C main-rs install
 
 .PHONY: clean
 clean:
-	$(RM) *~ *.o *.$(DLEXT) main
+	$(MAKE) -C CG clean
+	$(MAKE) -C main-c clean
+	$(MAKE) -C main-rs clean clean-release
+
+.PHONY: distclean
+distclean: clean
+	$(MAKE) -C CG distclean
+	$(MAKE) -C main-rs distclean
+	$(RM) -Rf $(ROOT_DIR)/target
+

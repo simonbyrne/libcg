@@ -15,28 +15,40 @@ jobs:
       matrix:
         version:
           - '1.5'
-          # - 'nightly'
+          - '^1.6.0-0'
+        #   - 'nightly'
         os:
           - ubuntu-latest
           - macOS-latest
           - windows-latest
         arch:
+          # - x86   # not working on ubuntu, windows (doesn't exist for mac)
           - x64
+        # exclude:
+        #   - os: macos-latest
+        #   - arch: x86
     steps:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-      - uses: julia-actions/julia-buildpkg@latest          
+      - uses: julia-actions/julia-buildpkg@latest
       - name: make
         run: make
         if: matrix.os != 'windows-latest'
       - name: make (win)
-        run: make JULIA_DIR=C:\julia CC=gcc
+        run: make main-c JULIA_DIR=C:\julia CC=gcc
         if: matrix.os == 'windows-latest'
-      - name: run
-        run: ./main --trace-compile=stderr
+      - name: run main-c
+        run: target/bin/main-c --trace-compile=stderr
+      - name: run main-rs
+        run: target/bin/main-rs --trace-compile=stderr
+        if: matrix.os != 'windows-latest'
       - name: library size
-        run: ls -lh libcg.*
+        run: ls -lh target/lib/libcg.*
         shell: bash
+        if: matrix.os != 'windows-latest'
+      - name: library size (win)
+        run: dir target/bin/libcg.*
+        if: matrix.os == 'windows-latest'

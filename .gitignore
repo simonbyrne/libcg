@@ -4,3 +4,5 @@ main
 *.dll
 *.o
 *~
+Manifest.toml
+/target
