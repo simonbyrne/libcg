@@ -1,5 +1,4 @@
 use libc::{c_double as double, c_int as int};
-use std::ffi::CStr;
 use std::os::raw::c_char;
 
 extern "C" {
@@ -15,8 +14,7 @@ extern "C" {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn laplace(mut _y: *mut libc::c_double,
-                                 mut _x: *mut libc::c_double) -> libc::c_int {
+pub unsafe extern "C" fn laplace(mut _y: *mut double, mut _x: *mut double) -> int {
     let len: usize = 10;
     let c: f64 = 0.01;
 
@@ -42,8 +40,10 @@ fn main() {
     let b = [1.0; 10];
     let mut x = [0.0; 10];
 
+    let ret;
+
     unsafe{
-        let ret = julia_cg(laplace, x.as_ptr(), b.as_ptr(), 10);
+        ret = julia_cg(laplace, x.as_ptr(), b.as_ptr(), 10);
     }
 
 
@@ -64,7 +64,7 @@ fn main() {
         println!("success");
     }
     unsafe {
-        shutdown_julia(0);
+        shutdown_julia(ret);
     }
 
 }
